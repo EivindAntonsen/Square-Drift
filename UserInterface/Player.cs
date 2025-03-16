@@ -2,42 +2,56 @@
 
 public class Player(float startX, float startY)
 {
-    private float X { get; set; } = startX; // Player X position
-    private float Y { get; set; } = startY; // Player Y position
-    private float VelocityX { get; set; } // Horizontal velocity
-    private float VelocityY { get; set; } // Vertical velocity
-    private const int Size = 20; // Player size
+    public float X { get; private set; } = startX;
+    public float Y { get; private set; } = startY;
+    private float VelocityX { get; set; }
+    private float VelocityY { get; set; }
+    private const int Size = 20;
 
-    private const float Acceleration = 1.0f;
-    private const float Friction = 0.95f;
+    private float _acceleration = 1.0f; // Default acceleration
+    private float _friction = 0.95f; // Default friction
+
+    public void UpdateGroundProperties(GroundType groundType)
+    {
+        switch (groundType)
+        {
+            case GroundType.Tarmac:
+                _acceleration = 0.9f;
+                _friction = 0.87f;
+                break;
+            case GroundType.Ice:
+                _acceleration = 0.28f; // Makes it harder to accelerate
+                _friction = 1f; // Makes deceleration more gradual (slippery)
+                break;
+            case GroundType.Dirt:
+                _acceleration = 0.5f; // Faster bursts of speed
+                _friction = 0.75f; // Strong deceleration (sticky)
+                break;
+        }
+    }
 
     public void Move(bool upPressed, bool downPressed, bool leftPressed, bool rightPressed)
     {
-        // Apply acceleration based on key presses
-        if (upPressed) VelocityY -= Acceleration;
-        if (downPressed) VelocityY += Acceleration;
-        if (leftPressed) VelocityX -= Acceleration;
-        if (rightPressed) VelocityX += Acceleration;
+        if (upPressed) VelocityY -= _acceleration;
+        if (downPressed) VelocityY += _acceleration;
+        if (leftPressed) VelocityX -= _acceleration;
+        if (rightPressed) VelocityX += _acceleration;
 
-        // Apply friction
-        VelocityX *= Friction;
-        VelocityY *= Friction;
+        VelocityX *= _friction;
+        VelocityY *= _friction;
 
-        // Update position
         X += VelocityX;
         Y += VelocityY;
     }
 
     public void KeepInBounds(int screenWidth, int screenHeight)
     {
-        // Keep the player within the game window boundaries
         X = Math.Max(0, Math.Min(screenWidth - Size, X));
         Y = Math.Max(0, Math.Min(screenHeight - Size, Y));
     }
 
-    public void Draw(Graphics graphics)
+    public void Draw(Graphics g)
     {
-        // Draw the player as a blue rectangle
-        graphics.FillRectangle(Brushes.Blue, X, Y, Size, Size);
+        g.FillRectangle(Brushes.Blue, X, Y, Size, Size);
     }
 }

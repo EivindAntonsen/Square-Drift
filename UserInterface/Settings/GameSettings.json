@@ -1,0 +1,16 @@
+﻿{
+  "Ground": {
+    "Tarmac": {
+      "Acceleration": 1.0,
+      "Friction": 1.0
+    },
+    "Dirt": {
+      "Acceleration": 1.0,
+      "Friction": 1.0
+    },
+    "Ice": {
+      "Acceleration": 1.0,
+      "Friction": 1.0
+    }
+  }
+}

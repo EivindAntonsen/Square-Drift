@@ -2,7 +2,7 @@ using Timer = System.Windows.Forms.Timer;
 
 namespace UserInterface;
 
-public sealed partial class GameForm : Form
+public partial class GameForm : Form
 {
     private readonly Timer _gameTimer;
     private readonly InputManager _inputManager;
@@ -10,30 +10,31 @@ public sealed partial class GameForm : Form
 
     private GameForm()
     {
-        // Initialize form
-        Text = "Cubic Drift!";
+        Text = "Mini Game with Dynamic Ground Types";
         Size = new Size(800, 600);
         DoubleBuffered = true;
 
-        // Initialize game components
         _inputManager = new InputManager();
         _gameState = new GameState(50, 50);
 
-        // Set up game timer
         _gameTimer = new Timer();
         _gameTimer.Interval = 16; // 60 FPS
         _gameTimer.Tick += GameTimer_Tick;
         _gameTimer.Start();
 
-        // Event handlers for input
-        KeyDown += (_, eventArgs) => _inputManager.KeyDown(eventArgs.KeyCode);
-        KeyUp += (_, eventArgs) => _inputManager.KeyUp(eventArgs.KeyCode);
+        KeyDown += (_, args) => _inputManager.KeyDown(args.KeyCode);
+        KeyUp += (_, args) => _inputManager.KeyUp(args.KeyCode);
     }
 
-    private void GameTimer_Tick(object sender, EventArgs eventArgs)
+    private void GameTimer_Tick(object sender, EventArgs e)
     {
-        // Update player movement
         var player = _gameState.Player;
+
+        // Check the ground type
+        var groundType = _gameState.GetGroundType(player.X, player.Y);
+        player.UpdateGroundProperties(groundType);
+
+        // Move the player
         player.Move(
                     _inputManager.IsKeyPressed(Keys.Up),
                     _inputManager.IsKeyPressed(Keys.Down),
@@ -41,19 +42,30 @@ public sealed partial class GameForm : Form
                     _inputManager.IsKeyPressed(Keys.Right)
                    );
 
-        // Keep player within boundaries
         player.KeepInBounds(ClientSize.Width, ClientSize.Height);
-
-        // Redraw the screen
         Invalidate();
     }
 
-    protected override void OnPaint(PaintEventArgs eventArgs)
+    protected override void OnPaint(PaintEventArgs e)
     {
-        base.OnPaint(eventArgs);
+        base.OnPaint(e);
+
+        // Draw the ground areas
+        foreach (var ground in _gameState.Grounds)
+        {
+            var brush = ground.Type switch
+            {
+                GroundType.Tarmac => Brushes.Gray,
+                GroundType.Ice => Brushes.LightBlue,
+                GroundType.Dirt => Brushes.Brown,
+                _ => Brushes.Gray
+            };
+
+            e.Graphics.FillRectangle(brush, ground.Area);
+        }
 
         // Draw the player
-        _gameState.Player.Draw(eventArgs.Graphics);
+        _gameState.Player.Draw(e.Graphics);
     }
 
     [STAThread]
