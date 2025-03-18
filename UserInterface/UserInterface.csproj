@@ -8,4 +8,32 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Content Update="Resources\Icons\icon1.ico">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Update="Resources\Icons\icon2.ico">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Update="Resources\Icons\image1.jpg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Resources\Icons\icon1.ico" />
+      <Content Include="Resources\Icons\icon1.ico">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Resources\Icons\icon2.ico" />
+      <Content Include="Resources\Icons\icon2.ico">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Resources\Icons\image1.jpg" />
+      <Content Include="Resources\Icons\image1.jpg">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Resources\Tilesets\" />
+    </ItemGroup>
+
 </Project>

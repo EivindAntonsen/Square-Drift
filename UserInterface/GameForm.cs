@@ -1,3 +1,4 @@
+using UserInterface.Map;
 using Timer = System.Windows.Forms.Timer;
 
 namespace UserInterface;
@@ -5,67 +6,74 @@ namespace UserInterface;
 public partial class GameForm : Form
 {
     private readonly Timer _gameTimer;
-    private readonly InputManager _inputManager;
     private readonly GameState _gameState;
+    private const string Title = "Square Drift!";
+    
 
     private GameForm()
     {
-        Text = "Mini Game with Dynamic Ground Types";
-        Size = new Size(800, 600);
+        Text = Title;
+        Size = new Size(1900, 1000);
         DoubleBuffered = true;
 
-        _inputManager = new InputManager();
-        _gameState = new GameState(50, 50);
+        _gameState = new GameState(1900, 1000);
 
         _gameTimer = new Timer();
-        _gameTimer.Interval = 16; // 60 FPS
+        _gameTimer.Interval = 1000 / 144;
         _gameTimer.Tick += GameTimer_Tick;
         _gameTimer.Start();
 
-        KeyDown += (_, args) => _inputManager.KeyDown(args.KeyCode);
-        KeyUp += (_, args) => _inputManager.KeyUp(args.KeyCode);
+        KeyDown += (_, args) => InputManager.KeyDown(args.KeyCode);
+        KeyUp += (_, args) => InputManager.KeyUp(args.KeyCode);
+
+        Icon = new Icon(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources/Icons/icon2.ico"));
     }
 
-    private void GameTimer_Tick(object sender, EventArgs e)
+    private void GameTimer_Tick(object sender, EventArgs args)
     {
-        var player = _gameState.Player;
-
-        // Check the ground type
-        var groundType = _gameState.GetGroundType(player.X, player.Y);
-        player.UpdateGroundProperties(groundType);
-
-        // Move the player
-        player.Move(
-                    _inputManager.IsKeyPressed(Keys.Up),
-                    _inputManager.IsKeyPressed(Keys.Down),
-                    _inputManager.IsKeyPressed(Keys.Left),
-                    _inputManager.IsKeyPressed(Keys.Right)
-                   );
-
-        player.KeepInBounds(ClientSize.Width, ClientSize.Height);
+        HandleInput();
+        UpdateGameState();
         Invalidate();
     }
 
-    protected override void OnPaint(PaintEventArgs e)
-    {
-        base.OnPaint(e);
+    private void UpdateGameState() => 
+        GameState.Update(_gameTimer.Interval / 1000f);
 
-        // Draw the ground areas
-        foreach (var ground in _gameState.Grounds)
+    private void HandleInput()
+    {
+        var player = _gameState.Player;
+        var car = player.Car;
+        
+        var forward = InputManager.IsKeyPressed(Keys.Up) || InputManager.IsKeyPressed(Keys.W);
+        var backward = InputManager.IsKeyPressed(Keys.Down) || InputManager.IsKeyPressed(Keys.S);
+        var left = InputManager.IsKeyPressed(Keys.Left) || InputManager.IsKeyPressed(Keys.A);
+        var right = InputManager.IsKeyPressed(Keys.Right) || InputManager.IsKeyPressed(Keys.D);
+        
+        var carVelocity = PhysicsManager.CalculatePhysics(
+            car, 
+            _gameState.Terrain.Select(terrain => terrain.Type), 
+            forward, backward, left, right, 
+            _gameTimer.Interval / 1000f);
+    }
+
+    protected override void OnPaint(PaintEventArgs args)
+    {
+        base.OnPaint(args);
+
+        foreach (var ground in _gameState.Terrain)
         {
             var brush = ground.Type switch
             {
-                GroundType.Tarmac => Brushes.Gray,
-                GroundType.Ice => Brushes.LightBlue,
-                GroundType.Dirt => Brushes.Brown,
+                TerrainType.Tarmac => Brushes.DimGray,
+                TerrainType.Ice => Brushes.LightBlue,
+                TerrainType.Dirt => Brushes.Brown,
                 _ => Brushes.Gray
             };
 
-            e.Graphics.FillRectangle(brush, ground.Area);
+            args.Graphics.FillRectangle(brush, ground.Area);
         }
-
-        // Draw the player
-        _gameState.Player.Draw(e.Graphics);
+        
+        GameState.DrawEntities(args.Graphics);
     }
 
     [STAThread]

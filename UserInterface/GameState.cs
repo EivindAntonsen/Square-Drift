@@ -1,23 +1,35 @@
-﻿namespace UserInterface;
+﻿using UserInterface.Entities;
+using UserInterface.Map;
 
-public class GameState(int startX, int startY)
+namespace UserInterface;
+
+public class GameState
 {
-    public Player Player { get; } = new(startX, startY);
+    public Player Player { get; }
+    public IEnumerable<Terrain> Terrain { get; }
 
-    public List<Ground> Grounds { get; } =
-    [
-        new(new Rectangle(0, 0, 400, 600), GroundType.Tarmac), // Left half is normal tarmac
-        new(new Rectangle(400, 0, 400, 600), GroundType.Ice)
-    ];
+    
 
-    public GroundType GetGroundType(float x, float y)
+    public GameState(int mapWidth, int mapHeight)
     {
-        var xInt = Convert.ToInt32(x);
-        var yInt = Convert.ToInt32(y);
-
-        return (from ground in Grounds
-                where ground.Area.Contains(xInt, yInt)
-                select ground.Type)
-            .FirstOrDefault();
+        Player = new Player();
+        
+        
+        EntityManager.AddEntity(Player.Car);
+        Terrain = TerrainGenerator.GenerateRandomTerrain(mapWidth, mapHeight);
     }
+
+  
+    public static void Update(float deltaTime)
+    {
+        EntityManager.UpdateEntities(deltaTime);
+    }
+
+    public static void DrawEntities(Graphics graphics) => 
+        EntityManager.DrawEntities(graphics);
+    
+    public IEnumerable<TerrainType> GetTerrainType(float x, float y) =>
+        from ground in Terrain
+        where ground.Area.Contains(Convert.ToInt32(x), Convert.ToInt32(y))
+        select ground.Type;
 }

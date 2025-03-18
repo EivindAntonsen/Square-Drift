@@ -1,15 +1,15 @@
 ﻿namespace UserInterface;
 
-public class InputManager
+public static class InputManager
 {
-    private readonly HashSet<Keys> _keysPressed = [];
+    private static readonly HashSet<Keys> _keysPressed = [];
 
-    public void KeyDown(Keys key) =>
+    public static void KeyDown(Keys key) =>
         _keysPressed.Add(key);
 
-    public void KeyUp(Keys key) =>
+    public static void KeyUp(Keys key) =>
         _keysPressed.Remove(key);
 
-    public bool IsKeyPressed(Keys key) =>
+    public static bool IsKeyPressed(Keys key) =>
         _keysPressed.Contains(key);
 }

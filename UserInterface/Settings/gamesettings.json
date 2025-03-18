@@ -1,0 +1,24 @@
+﻿{
+  "Map":{
+    "SizeX":1800,
+    "SizeY":1000
+  },
+  "GroundSettings": {
+    "Tarmac": {
+      "Acceleration": 0.9,
+      "Friction": 0.87
+    },
+    "Dirt": {
+      "Acceleration": 0.5,
+      "Friction": 0.75
+    },
+    "Ice": {
+      "Acceleration": 0.28,
+      "Friction": 1.0
+    }
+  },
+  "Physics":{
+    "Drag": 0,
+    "Weight": 0
+  }
+}
