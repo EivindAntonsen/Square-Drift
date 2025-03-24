@@ -1,7 +1,7 @@
 ﻿using UserInterface.Entities;
 using UserInterface.Map;
 
-namespace UserInterface;
+namespace UserInterface.Managers;
 
 public static class PhysicsManager
 {

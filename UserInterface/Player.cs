@@ -5,5 +5,8 @@ namespace UserInterface;
 
 public class Player
 {
-    public Car Car { get; } = new(0,0,0);
+    public Car Car { get; } =
+        new(GameConstants.Car.Weight,
+            GameConstants.Car.EnginePower,
+            GameConstants.Car.BrakePower);
 }

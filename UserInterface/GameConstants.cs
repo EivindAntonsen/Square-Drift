@@ -9,4 +9,11 @@ public static class GameConstants
         public const float Ice = 0.95f;
         public const float Default = 0.63f;
     }
+
+    public static class Car
+    {
+        public const float Weight = 1500f;
+        public const float EnginePower = 300f;
+        public const float BrakePower = 100f;
+    }
 }

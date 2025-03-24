@@ -1,4 +1,5 @@
 ﻿using UserInterface.Entities;
+using UserInterface.Managers;
 using UserInterface.Map;
 
 namespace UserInterface;
@@ -13,8 +14,6 @@ public class GameState
     public GameState(int mapWidth, int mapHeight)
     {
         Player = new Player();
-        
-        
         EntityManager.AddEntity(Player.Car);
         Terrain = TerrainGenerator.GenerateRandomTerrain(mapWidth, mapHeight);
     }

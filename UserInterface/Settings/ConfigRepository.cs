@@ -1,4 +1,4 @@
-﻿namespace UserInterface;
+﻿namespace UserInterface.Settings;
 
 public static class ConfigRepository
 {

@@ -1,3 +1,4 @@
+using UserInterface.Managers;
 using UserInterface.Map;
 using Timer = System.Windows.Forms.Timer;
 
@@ -8,6 +9,15 @@ public partial class GameForm : Form
     private readonly Timer _gameTimer;
     private readonly GameState _gameState;
     private const string Title = "Square Drift!";
+    
+    
+    [STAThread]
+    public static void Main()
+    {
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
+        Application.Run(new GameForm());
+    }
     
 
     private GameForm()
@@ -20,7 +30,7 @@ public partial class GameForm : Form
 
         _gameTimer = new Timer();
         _gameTimer.Interval = 1000 / 144;
-        _gameTimer.Tick += GameTimer_Tick;
+        _gameTimer.Tick += GameTimerTick;
         _gameTimer.Start();
 
         KeyDown += (_, args) => InputManager.KeyDown(args.KeyCode);
@@ -29,13 +39,15 @@ public partial class GameForm : Form
         Icon = new Icon(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources/Icons/icon2.ico"));
     }
 
-    private void GameTimer_Tick(object sender, EventArgs args)
+    
+    private void GameTimerTick(object sender, EventArgs args)
     {
         HandleInput();
         UpdateGameState();
         Invalidate();
     }
 
+    
     private void UpdateGameState() => 
         GameState.Update(_gameTimer.Interval / 1000f);
 
@@ -54,8 +66,11 @@ public partial class GameForm : Form
             _gameState.Terrain.Select(terrain => terrain.Type), 
             forward, backward, left, right, 
             _gameTimer.Interval / 1000f);
+
+        car.Velocity.Update(carVelocity.X, carVelocity.Y);
     }
 
+    
     protected override void OnPaint(PaintEventArgs args)
     {
         base.OnPaint(args);
@@ -74,13 +89,5 @@ public partial class GameForm : Form
         }
         
         GameState.DrawEntities(args.Graphics);
-    }
-
-    [STAThread]
-    public static void Main()
-    {
-        Application.EnableVisualStyles();
-        Application.SetCompatibleTextRenderingDefault(false);
-        Application.Run(new GameForm());
     }
 }

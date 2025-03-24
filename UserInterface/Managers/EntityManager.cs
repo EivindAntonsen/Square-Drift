@@ -1,4 +1,6 @@
-﻿namespace UserInterface.Entities;
+﻿using UserInterface.Entities;
+
+namespace UserInterface.Managers;
 
 public static class EntityManager
 {

@@ -1,4 +1,4 @@
-﻿namespace UserInterface;
+﻿namespace UserInterface.Managers;
 
 public static class InputManager
 {
